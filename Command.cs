@@ -75,7 +75,7 @@ namespace AntWorker.Net
 
     internal class NotionVerb : ICommandProperty
     {
-        internal class NotionAddDaily : ICommandProperty
+        internal class AddDaily : ICommandProperty
         {
             public void AddToCommand(Command c)
             {
@@ -95,7 +95,7 @@ namespace AntWorker.Net
         public void AddToCommand(Command c)
         {
             var command = new Command("notion", "Notion related commands");
-            new NotionAddDaily().AddToCommand(command);
+            new AddDaily().AddToCommand(command);
             c.AddCommand(command);
         }
     }
