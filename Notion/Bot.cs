@@ -1,0 +1,61 @@
+﻿using global::Notion.Client;
+
+namespace AntWorker.Net.Notion
+{
+    internal class Bot
+    {
+        private NotionClient _client;
+
+        public Bot(string apiKey)
+        {
+            _client = new NotionClient(new ClientOptions
+            {
+                AuthToken = apiKey
+            });
+        }
+
+        public async Task CreateTaskPageAsync(string parentId)
+        {
+            var today = Today;
+            Logging.LogInfo($"Creating task page for {parentId}, date: {today}");
+            var page = await _client.Pages.CreateAsync(new PagesCreateParameters
+            {
+                Parent = new DatabaseParentInput
+                {
+                    DatabaseId = parentId
+                },
+                Properties = new Dictionary<string, PropertyValue>
+                {
+                    {
+                        "Name",
+                        new TitlePropertyValue
+                         {
+                            Title = new List<RichTextBase>
+                            {
+                                 new RichTextText
+                                 {
+                                     Text = new Text
+                                     {
+                                         Content = today
+                                     }
+                                 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            Logging.LogInfo($"Page created: {page.Url}");
+        }
+
+        private static string Today 
+        {  
+            get
+            {
+                var now = DateTime.UtcNow;
+                var cst = TimeZoneInfo.ConvertTime(now, TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+                return cst.ToString("yyyy年MM月dd日");
+            } 
+        }
+    }
+}
