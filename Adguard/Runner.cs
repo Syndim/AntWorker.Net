@@ -13,11 +13,13 @@ namespace AntWorker.Net.Adguard
             var sb = new StringBuilder();
             foreach (var url in options.Urls!)
             {
+                Logging.LogInfo($"Fetching hosts from {url}");
                 var content = await url.GetStringAsync();
                 sb.Append(content);
                 sb.Append(Environment.NewLine);
             }
 
+            Logging.LogInfo("Submitting to Adguard");
             await options.Root.AppendPathSegments("control", "filtering", "set_rules")
                 .WithBasicAuth(entry?.Username!, entry?.Password)
                 .WithHeader("Content-Type", "text/plain")
