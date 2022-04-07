@@ -5,6 +5,13 @@ namespace AntWorker.Net
 {
     internal static class Keepass
     {
+        public struct Entry
+        {
+            public string? Username { get; set; }
+
+            public string? Password { get; set; }
+        }
+
         private static PwDatabase? _db;
 
         public static void Open(string path, string password)
@@ -21,13 +28,13 @@ namespace AntWorker.Net
             }
         }
 
-        public static string? GetPassword(string key)
+        public static Entry? GetEntry(string key)
         {
             var keys = key.Split('.').ToArray();
             return FindEntry(_db?.RootGroup, 0, keys);
         }
 
-        private static string? FindEntry(PwGroup? group, int index, string[] keys)
+        private static Entry? FindEntry(PwGroup? group, int index, string[] keys)
         {
             if (group == null || index >= keys.Length)
             {
@@ -52,7 +59,11 @@ namespace AntWorker.Net
                 {
                     if (entry?.Strings?.Get("Title").ReadString() == key)
                     {
-                        return entry.Strings.Get("Password").ReadString();
+                        return new Entry
+                        {
+                            Username = entry.Strings.Get("UserName").ReadString(),
+                            Password = entry.Strings.Get("Password").ReadString(),
+                        };
                     }
                 }
             }

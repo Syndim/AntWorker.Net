@@ -2,10 +2,10 @@
 {
     internal static class Runner
     {
-        public static async Task CreateTodayTaskPageAsync(NotionOptions args)
+        public static async Task CreateTodayTaskPageAsync(KeepassOptions keepassArgs, NotionOptions args)
         {
-            Keepass.Open(args.Path!, args.Key!);
-            var token = Keepass.GetPassword(args.Entry!);
+            Keepass.Open(keepassArgs.Path!, keepassArgs.Key!);
+            var token = Keepass.GetEntry(keepassArgs.Entry!)?.Password;
 
             var bot = new Bot(token!);
 

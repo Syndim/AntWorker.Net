@@ -1,25 +1,46 @@
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.Binding;
 
 namespace AntWorker.Net.Notion
 {
-    internal class NotionOptions : KeepassOptions
+    internal class NotionOptions : ICommandProperty
     {
+        public class OptionsBinder : BinderBase<NotionOptions>
+        {
+            private IList<Option<string?>> _options;
+
+            public OptionsBinder(IList<Option<string?>> options)
+            {
+                _options = options;
+            }
+
+            protected override NotionOptions GetBoundValue(BindingContext bindingContext)
+            {
+                return new NotionOptions
+                {
+                    DatabaseId = bindingContext.ParseResult.GetValueForOption<string?>(_options[0]!)
+                };
+            }
+        }
+
         public string? DatabaseId { get; set; }
 
-        public override void AddToCommand(Command c)
+        public IList<Option<string?>> Options { get; } = new List<Option<string?>>
         {
-            base.AddToCommand(c);
-
-            var options = new List<Option>
+            new Option<string?>(new string[] { "-d", "--database-id"}, "Notion database id")
             {
-                new Option<string>(new string[] { "-d", "--database-id"}, "Notion database id")
-                {
-                    IsRequired = true,
-                }
-            };
+                IsRequired = true,
+            }
+        };
 
-            options.ForEach(option => c.AddOption(option));
+        public OptionsBinder CreateBinder() => new OptionsBinder(Options);
+
+        public void AddToCommand(Command c)
+        {
+            foreach (var option in Options)
+            {
+                c.AddOption(option);
+            }
         }
     }
 
@@ -29,13 +50,15 @@ namespace AntWorker.Net.Notion
         {
             public void AddToCommand(Command c)
             {
-                var addDailyCommand = new Command("add-daily", "Add daily task page")
+                var addDailyCommand = new Command("add-daily", "Add daily task page");
+                var keepassOptions = new KeepassOptions();
+                keepassOptions.AddToCommand(c);
+                var notionOptions = new NotionOptions();
+                notionOptions.AddToCommand(c);
+                addDailyCommand.SetHandler(async (KeepassOptions keepassOptions, NotionOptions options) =>
                 {
-                    Handler = CommandHandler.Create<NotionOptions>(async (options) =>
-                    {
-                        await Runner.CreateTodayTaskPageAsync(options);
-                    })
-                };
+                    await Runner.CreateTodayTaskPageAsync(keepassOptions, options);
+                }, keepassOptions.CreateBinder(), notionOptions.CreateBinder());
 
                 new NotionOptions().AddToCommand(addDailyCommand);
                 c.AddCommand(addDailyCommand);
@@ -49,4 +72,5 @@ namespace AntWorker.Net.Notion
             c.AddCommand(command);
         }
     }
+
 }

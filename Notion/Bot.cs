@@ -8,7 +8,7 @@ namespace AntWorker.Net.Notion
 
         public Bot(string apiKey)
         {
-            _client = new NotionClient(new ClientOptions
+            _client = NotionClientFactory.Create(new ClientOptions
             {
                 AuthToken = apiKey
             });
@@ -48,14 +48,16 @@ namespace AntWorker.Net.Notion
             Logging.LogInfo($"Page created: {page.Url}");
         }
 
-        private static string Today 
-        {  
+        private static string Today
+        {
+
             get
             {
                 var now = DateTime.UtcNow;
                 var cst = TimeZoneInfo.ConvertTime(now, TimeZoneInfo.FindSystemTimeZoneById("China Standard Time"));
+
                 return cst.ToString("yyyy年MM月dd日");
-            } 
+            }
         }
     }
 }
