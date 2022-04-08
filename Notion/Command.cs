@@ -52,15 +52,14 @@ namespace AntWorker.Net.Notion
             {
                 var addDailyCommand = new Command("add-daily", "Add daily task page");
                 var keepassOptions = new KeepassOptions();
-                keepassOptions.AddToCommand(c);
+                keepassOptions.AddToCommand(addDailyCommand);
                 var notionOptions = new NotionOptions();
-                notionOptions.AddToCommand(c);
+                notionOptions.AddToCommand(addDailyCommand);
                 addDailyCommand.SetHandler(async (KeepassOptions keepassOptions, NotionOptions options) =>
                 {
                     await Runner.CreateTodayTaskPageAsync(keepassOptions, options);
                 }, keepassOptions.CreateBinder(), notionOptions.CreateBinder());
 
-                new NotionOptions().AddToCommand(addDailyCommand);
                 c.AddCommand(addDailyCommand);
             }
         }
