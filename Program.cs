@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using AntWorker.Net.Adguard;
 using AntWorker.Net.Notion;
+using AntWorker.Net.Git;
 
 namespace AntWorker.Net
 {
@@ -11,7 +12,8 @@ namespace AntWorker.Net
             var commands = new List<ICommandProperty>
             {
                 new NotionVerb(),
-                new AdguardVerb()
+                new AdguardVerb(),
+                new GitVerb(),
             };
 
             var rootCommand = new RootCommand();

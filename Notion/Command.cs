@@ -71,5 +71,4 @@ namespace AntWorker.Net.Notion
             c.AddCommand(command);
         }
     }
-
 }
