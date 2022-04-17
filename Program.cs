@@ -2,6 +2,7 @@
 using AntWorker.Net.Adguard;
 using AntWorker.Net.Notion;
 using AntWorker.Net.Git;
+using AntWorker.Net.Obsidian;
 
 namespace AntWorker.Net
 {
@@ -14,6 +15,7 @@ namespace AntWorker.Net
                 new NotionVerb(),
                 new AdguardVerb(),
                 new GitVerb(),
+                new ObsidianVerb()
             };
 
             var rootCommand = new RootCommand();
