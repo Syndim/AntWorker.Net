@@ -6,12 +6,12 @@ namespace AntWorker.Net.Adguard
 {
     internal static class Runner
     {
-        public static async Task UpdateRulesAsync(KeepassOptions keepassOptions, AdguardOptions options)
+        public static async Task UpdateRulesAsync(KeepassOptions keepassOptions, string root, string[] urls)
         {
             Keepass.Open(keepassOptions.Path!, keepassOptions.Key!);
             var entry = Keepass.GetEntry(keepassOptions.Entry!);
             var sb = new StringBuilder();
-            foreach (var url in options.Urls!)
+            foreach (var url in urls)
             {
                 Logging.LogInfo($"Fetching hosts from {url}");
                 var content = await url.GetStringAsync();
@@ -20,7 +20,7 @@ namespace AntWorker.Net.Adguard
             }
 
             Logging.LogInfo("Submitting to Adguard");
-            await options.Root.AppendPathSegments("control", "filtering", "set_rules")
+            await root.AppendPathSegments("control", "filtering", "set_rules")
                 .WithBasicAuth(entry?.Username!, entry?.Password)
                 .WithHeader("Content-Type", "text/plain")
                 .PostStringAsync(sb.ToString());

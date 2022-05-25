@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Notion.Net" Version="2.2.3" />
     <PackageReference Include="pt.KeePassLibStd" Version="2.50.0.4849" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />

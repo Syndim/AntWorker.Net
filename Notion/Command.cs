@@ -1,74 +1,58 @@
 using System.CommandLine;
-using System.CommandLine.Binding;
 
 namespace AntWorker.Net.Notion
 {
-    internal class NotionOptions : ICommandProperty
-    {
-        public class OptionsBinder : BinderBase<NotionOptions>
-        {
-            private IList<Option<string?>> _options;
-
-            public OptionsBinder(IList<Option<string?>> options)
-            {
-                _options = options;
-            }
-
-            protected override NotionOptions GetBoundValue(BindingContext bindingContext)
-            {
-                return new NotionOptions
-                {
-                    DatabaseId = bindingContext.ParseResult.GetValueForOption<string?>(_options[0]!)
-                };
-            }
-        }
-
-        public string? DatabaseId { get; set; }
-
-        public IList<Option<string?>> Options { get; } = new List<Option<string?>>
-        {
-            new Option<string?>(new string[] { "-d", "--database-id"}, "Notion database id")
-            {
-                IsRequired = true,
-            }
-        };
-
-        public OptionsBinder CreateBinder() => new OptionsBinder(Options);
-
-        public void AddToCommand(Command c)
-        {
-            foreach (var option in Options)
-            {
-                c.AddOption(option);
-            }
-        }
-    }
-
     internal class NotionVerb : ICommandProperty
     {
-        internal class AddDaily : ICommandProperty
+        private static Option<string> DatabaseIdOption = new Option<string>(new string[] { "-d", "--database-id" }, "Notion database id")
         {
-            public void AddToCommand(Command c)
-            {
-                var addDailyCommand = new Command("add-daily", "Add daily task page");
-                var keepassOptions = new KeepassOptions();
-                keepassOptions.AddToCommand(addDailyCommand);
-                var notionOptions = new NotionOptions();
-                notionOptions.AddToCommand(addDailyCommand);
-                addDailyCommand.SetHandler(async (KeepassOptions keepassOptions, NotionOptions options) =>
-                {
-                    await Runner.CreateTodayTaskPageAsync(keepassOptions, options);
-                }, keepassOptions.CreateBinder(), notionOptions.CreateBinder());
+            IsRequired = true,
+        };
 
-                c.AddCommand(addDailyCommand);
-            }
+        private static Option<string> SavePathOption = new Option<string>(new string[] { "-s", "--save-path" }, "Path to save the exported notes")
+        {
+            IsRequired = true,
+        };
+
+        private Command _command = new Command("notion", "Notion related commands");
+
+        public NotionVerb()
+        {
+            SetupAddDaily();
+            SetupExport();
+        }
+
+        private void SetupAddDaily()
+        {
+            var command = new Command("add-daily", "Add daily task page");
+            var keepassOptions = new KeepassOptions();
+            keepassOptions.AddToCommand(command);
+            command.SetHandler(async (KeepassOptions keepassOptions, string databaseId) =>
+            {
+                await Runner.CreateTodayTaskPageAsync(keepassOptions, databaseId);
+            }, keepassOptions.CreateBinder(), DatabaseIdOption);
+            command.AddOptions(DatabaseIdOption);
+
+            _command.Add(command);
+        }
+
+        private void SetupExport()
+        {
+            var command = new Command("export", "Export notes");
+            var keepassOptions = new KeepassOptions();
+            keepassOptions.AddToCommand(command);
+            command.SetHandler(async (KeepassOptions options, string savePath) =>
+            {
+                await Runner.ExportAsync(options, "markdown", savePath);
+                await Runner.ExportAsync(options, "html", savePath);
+            }, keepassOptions.CreateBinder(), SavePathOption);
+            command.AddOptions(SavePathOption);
+            _command.Add(command);
         }
 
         public void AddToCommand(Command c)
         {
-            var command = new Command("notion", "Notion related commands");
-            new AddDaily().AddToCommand(command);
-            c.AddCommand(command);
+            c.Add(_command);
         }
     }
 }
