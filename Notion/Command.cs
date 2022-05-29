@@ -14,6 +14,8 @@ namespace AntWorker.Net.Notion
             IsRequired = true,
         };
 
+        private static Option<string> ProxyOption = new Option<string>(new string[] { "-x", "--proxy" }, "Proxy address");
+
         private Command _command = new Command("notion", "Notion related commands");
 
         public NotionVerb()
@@ -41,12 +43,12 @@ namespace AntWorker.Net.Notion
             var command = new Command("export", "Export notes");
             var keepassOptions = new KeepassOptions();
             keepassOptions.AddToCommand(command);
-            command.SetHandler(async (KeepassOptions options, string savePath) =>
+            command.SetHandler(async (KeepassOptions options, string savePath, string proxy) =>
             {
-                await Runner.ExportAsync(options, "markdown", savePath);
-                await Runner.ExportAsync(options, "html", savePath);
-            }, keepassOptions.CreateBinder(), SavePathOption);
-            command.AddOptions(SavePathOption);
+                await Runner.ExportAsync(options, proxy, "markdown", savePath);
+                await Runner.ExportAsync(options, proxy, "html", savePath);
+            }, keepassOptions.CreateBinder(), SavePathOption, ProxyOption);
+            command.AddOptions(SavePathOption, ProxyOption);
             _command.Add(command);
         }
 

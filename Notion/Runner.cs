@@ -57,8 +57,9 @@ internal static class Runner
         public T? Data { get; set; }
     }
 
-    public static async Task ExportAsync(KeepassOptions keepassArgs, string format, string savePath)
+    public static async Task ExportAsync(KeepassOptions keepassArgs, string proxy, string format, string savePath)
     {
+        Helper.SetFlurlProxy(proxy);
         const string API_BASE = "https://www.notion.so/api/v3";
         Keepass.Open(keepassArgs.Path!, keepassArgs.Key!);
         var entry = Keepass.GetEntry(keepassArgs.Entry!);

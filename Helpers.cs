@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.Net;
+using Flurl.Http;
+using Flurl.Http.Configuration;
 
 namespace AntWorker.Net;
 
@@ -19,5 +22,37 @@ internal static class Helper
 
         ps.Start();
         return ps;
+    }
+
+    public class ProxyHttpClientFactory : DefaultHttpClientFactory
+    {
+        private string _address;
+
+        public ProxyHttpClientFactory(string address)
+        {
+            _address = address;
+        }
+
+        public override HttpMessageHandler CreateMessageHandler()
+        {
+            return new HttpClientHandler
+            {
+                Proxy = new WebProxy(_address),
+                UseProxy = true
+            };
+        }
+    }
+
+    public static void SetFlurlProxy(string address)
+    {
+        if (string.IsNullOrEmpty(address))
+        {
+            return;
+        }
+
+        FlurlHttp.Configure(settings =>
+        {
+            settings.HttpClientFactory = new ProxyHttpClientFactory(address);
+        });
     }
 }
