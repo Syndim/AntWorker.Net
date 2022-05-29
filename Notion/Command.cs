@@ -14,6 +14,11 @@ namespace AntWorker.Net.Notion
             IsRequired = true,
         };
 
+        private static Option<string> UserIdOption = new Option<string>(new string[] { "-u", "--user-id" }, "User id")
+        {
+            IsRequired = true,
+        };
+
         private static Option<string> ProxyOption = new Option<string>(new string[] { "-x", "--proxy" }, "Proxy address");
 
         private Command _command = new Command("notion", "Notion related commands");
@@ -43,12 +48,12 @@ namespace AntWorker.Net.Notion
             var command = new Command("export", "Export notes");
             var keepassOptions = new KeepassOptions();
             keepassOptions.AddToCommand(command);
-            command.SetHandler(async (KeepassOptions options, string savePath, string proxy) =>
+            command.SetHandler(async (KeepassOptions options, string savePath, string proxy, string userId) =>
             {
-                await Runner.ExportAsync(options, proxy, "markdown", savePath);
-                await Runner.ExportAsync(options, proxy, "html", savePath);
-            }, keepassOptions.CreateBinder(), SavePathOption, ProxyOption);
-            command.AddOptions(SavePathOption, ProxyOption);
+                await Runner.ExportAsync(options, proxy, "markdown", savePath, userId);
+                await Runner.ExportAsync(options, proxy, "html", savePath, userId);
+            }, keepassOptions.CreateBinder(), SavePathOption, ProxyOption, UserIdOption);
+            command.AddOptions(SavePathOption, ProxyOption, UserIdOption);
             _command.Add(command);
         }
 

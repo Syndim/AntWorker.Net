@@ -57,7 +57,7 @@ internal static class Runner
         public T? Data { get; set; }
     }
 
-    public static async Task ExportAsync(KeepassOptions keepassArgs, string proxy, string format, string savePath)
+    public static async Task ExportAsync(KeepassOptions keepassArgs, string proxy, string format, string savePath, string userId)
     {
         Helper.SetFlurlProxy(proxy);
         const string API_BASE = "https://www.notion.so/api/v3";
@@ -67,6 +67,7 @@ internal static class Runner
         var taskResult = await API_BASE.AppendPathSegment("enqueueTask")
             .WithCookie("token_v2", entry?.Password!)
             .WithHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0")
+            .WithHeader("x-notion-active-user-header", userId)
             .PostJsonAsync(new
             {
                 task = new
@@ -78,7 +79,7 @@ internal static class Runner
                         exportOptions = new
                         {
                             exportType = format,
-                            timeZone = "Asia/Shangha",
+                            timeZone = "Asia/Shanghai",
                             locale = "en",
                         },
                     },
