@@ -66,6 +66,7 @@ internal static class Runner
         Logging.LogInfo($"Start task for format {format}");
         var taskResult = await API_BASE.AppendPathSegment("enqueueTask")
             .WithCookie("token_v2", entry?.Password!)
+            .WithHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0")
             .PostJsonAsync(new
             {
                 task = new
