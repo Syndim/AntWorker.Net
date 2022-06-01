@@ -27,6 +27,7 @@ namespace AntWorker.Net.Notion
         {
             SetupAddDaily();
             SetupExport();
+            SetupArchive();
         }
 
         private void SetupAddDaily()
@@ -37,6 +38,20 @@ namespace AntWorker.Net.Notion
             command.SetHandler(async (KeepassOptions keepassOptions, string databaseId) =>
             {
                 await Runner.CreateTodayTaskPageAsync(keepassOptions, databaseId);
+            }, keepassOptions.CreateBinder(), DatabaseIdOption);
+            command.AddOptions(DatabaseIdOption);
+
+            _command.Add(command);
+        }
+
+        private void SetupArchive()
+        {
+            var command = new Command("archive", "Archive completed tasks");
+            var keepassOptions = new KeepassOptions();
+            keepassOptions.AddToCommand(command);
+            command.SetHandler(async (KeepassOptions keepassOptions, string databaseId) =>
+            {
+                await Runner.ArchiveAsync(keepassOptions, databaseId);
             }, keepassOptions.CreateBinder(), DatabaseIdOption);
             command.AddOptions(DatabaseIdOption);
 
