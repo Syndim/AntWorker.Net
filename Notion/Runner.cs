@@ -7,10 +7,14 @@ internal static class Runner
 {
     public static async Task CreateTodayTaskPageAsync(KeepassOptions keepassArgs, string databaseId)
     {
-        Keepass.Open(keepassArgs.Path!, keepassArgs.Key!);
-        var token = Keepass.GetEntry(keepassArgs.Entry!)?.Password;
+        var bot = CreateBot(keepassArgs);
 
-        var bot = new Bot(token!);
+        await bot.CreateTaskPageAsync(databaseId);
+    }
+
+    public static async Task ArchiveAsync(KeepassOptions keepassArgs, string databaseId)
+    {
+        var bot = CreateBot(keepassArgs);
 
         await bot.CreateTaskPageAsync(databaseId);
     }
@@ -141,5 +145,14 @@ internal static class Runner
         var stream = await exportUrl.GetStreamAsync();
         using var outputFile = File.Create(Path.Combine(savePath, $"{format}.zip"));
         await stream.CopyToAsync(outputFile);
+    }
+
+    private static Bot CreateBot(KeepassOptions keepassOptions)
+    {
+        Keepass.Open(keepassOptions.Path!, keepassOptions.Key!);
+        var token = Keepass.GetEntry(keepassOptions.Entry!)?.Password;
+
+        var bot = new Bot(token!);
+        return bot;
     }
 }

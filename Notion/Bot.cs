@@ -48,6 +48,21 @@ namespace AntWorker.Net.Notion
             Logging.LogInfo($"Page created: {page.Url}");
         }
 
+        public async Task ArchiveAsync(string databaseId)
+        {
+            var filter = new SelectFilter("Status", equal: "Completed");
+            var pages = await _client.Databases.QueryAsync(databaseId, new DatabasesQueryParameters { Filter = filter });
+            var properties = new Dictionary<string, PropertyValue>
+            {
+                { "Status", new SelectPropertyValue { Select = new SelectOption { Name = "Archived" } } }
+            };
+
+            foreach (var page in pages.Results)
+            {
+                await _client.Pages.UpdatePropertiesAsync(page.Id, properties);
+            }
+        }
+
         private static string Today
         {
 
