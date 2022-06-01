@@ -28,6 +28,7 @@ namespace AntWorker.Net.Notion
             SetupAddDaily();
             SetupExport();
             SetupArchive();
+            SetupSetCompleteDate();
         }
 
         private void SetupAddDaily()
@@ -60,7 +61,7 @@ namespace AntWorker.Net.Notion
 
         private void SetupSetCompleteDate()
         {
-            var command = new Command("set-complete-date", "Archive completed tasks");
+            var command = new Command("set-complete-date", "Set complete date");
             var keepassOptions = new KeepassOptions();
             keepassOptions.AddToCommand(command);
             command.SetHandler(async (KeepassOptions keepassOptions, string databaseId) =>
