@@ -63,9 +63,27 @@ namespace AntWorker.Net.Notion
             }
         }
 
+        public async Task SetCompleteDateAsync(string databaseId)
+        {
+            var filter = new CompoundFilter(and: new List<Filter>
+                    {
+                        new SelectFilter("Status", equal: "Complete"),
+                        new DateFilter("Date Completed", isEmpty: true)
+                    });
+            var properties = new Dictionary<string, PropertyValue>
+            {
+                { "Date Completed", new DatePropertyValue { Date = new Date { Start = DateTime.Today } } }
+            };
+
+            var pages = await _client.Databases.QueryAsync(databaseId, new DatabasesQueryParameters { Filter = filter });
+            foreach (var page in pages.Results)
+            {
+                await _client.Pages.UpdatePropertiesAsync(page.Id, properties);
+            }
+        }
+
         private static string Today
         {
-
             get
             {
                 var now = DateTime.UtcNow;

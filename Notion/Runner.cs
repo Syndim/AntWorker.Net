@@ -19,6 +19,12 @@ internal static class Runner
         await bot.ArchiveAsync(databaseId);
     }
 
+    public static async Task SetCompleteDateAsync(KeepassOptions keepassArgs, string databaseId)
+    {
+        var bot = CreateBot(keepassArgs);
+        await bot.SetCompleteDateAsync(databaseId);
+    }
+
     class TaskInfo
     {
         [JsonProperty("taskId")]

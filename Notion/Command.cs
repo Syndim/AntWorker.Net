@@ -58,6 +58,20 @@ namespace AntWorker.Net.Notion
             _command.Add(command);
         }
 
+        private void SetupSetCompleteDate()
+        {
+            var command = new Command("set-complete-date", "Archive completed tasks");
+            var keepassOptions = new KeepassOptions();
+            keepassOptions.AddToCommand(command);
+            command.SetHandler(async (KeepassOptions keepassOptions, string databaseId) =>
+            {
+                await Runner.SetCompleteDateAsync(keepassOptions, databaseId);
+            }, keepassOptions.CreateBinder(), DatabaseIdOption);
+            command.AddOptions(DatabaseIdOption);
+
+            _command.Add(command);
+        }
+
         private void SetupExport()
         {
             var command = new Command("export", "Export notes");
