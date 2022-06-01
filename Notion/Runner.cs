@@ -16,7 +16,7 @@ internal static class Runner
     {
         var bot = CreateBot(keepassArgs);
 
-        await bot.CreateTaskPageAsync(databaseId);
+        await bot.ArchiveAsync(databaseId);
     }
 
     class TaskInfo
