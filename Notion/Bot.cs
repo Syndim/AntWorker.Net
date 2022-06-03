@@ -90,7 +90,7 @@ namespace AntWorker.Net.Notion
                     });
             var properties = new Dictionary<string, PropertyValue>
             {
-                { "Date Completed", new DateWithoutTimePropertyValue { Date = new DateString { Start = DateTime.Today.ToString("YYYY-MM-DD") } } }
+                { "Date Completed", new DateWithoutTimePropertyValue { Date = new DateString { Start = DateTime.Today.ToString("yyyy-MM-dd") } } }
             };
 
             var pages = await _client.Databases.QueryAsync(databaseId, new DatabasesQueryParameters { Filter = filter });
