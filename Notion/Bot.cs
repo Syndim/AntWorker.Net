@@ -4,6 +4,19 @@ namespace AntWorker.Net.Notion
 {
     internal class Bot
     {
+        class DateString
+        {
+            public string? Start { get; set; }
+            public string? End { get; set; }
+        }
+
+        class DateWithoutTimePropertyValue : PropertyValue
+        {
+            public override PropertyValueType Type { get; } = PropertyValueType.Date;
+
+            public DateString? Date { get; set; }
+        }
+
         private NotionClient _client;
 
         public Bot(string apiKey)
@@ -74,7 +87,7 @@ namespace AntWorker.Net.Notion
             var today = DateTime.Today;
             var properties = new Dictionary<string, PropertyValue>
             {
-                { "Date Completed", new DatePropertyValue { Date = new Date { Start = DateTime.Parse($"{today.Year}-{today.Month}-{today.Day}") } } }
+                { "Date Completed", new DateWithoutTimePropertyValue { Date = new DateString { Start = $"{today.Year}-{today.Month}-{today.Day}" } } }
             };
 
             var pages = await _client.Databases.QueryAsync(databaseId, new DatabasesQueryParameters { Filter = filter });
