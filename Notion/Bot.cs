@@ -68,7 +68,7 @@ namespace AntWorker.Net.Notion
         {
             var filter = new CompoundFilter(and: new List<Filter>
                     {
-                        new SelectFilter("Status", equal: "Complete"),
+                        new SelectFilter("Status", equal: "Completed"),
                         new DateFilter("Date Completed", isEmpty: true)
                     });
             var properties = new Dictionary<string, PropertyValue>
