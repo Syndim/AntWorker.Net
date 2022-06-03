@@ -71,9 +71,10 @@ namespace AntWorker.Net.Notion
                         new SelectFilter("Status", equal: "Completed"),
                         new DateFilter("Date Completed", isEmpty: true)
                     });
+            var today = DateTime.Today;
             var properties = new Dictionary<string, PropertyValue>
             {
-                { "Date Completed", new DatePropertyValue { Date = new Date { Start = DateTime.Today } } }
+                { "Date Completed", new DatePropertyValue { Date = new Date { Start = new DateTime(today.Year, today.Month, today.Day) } } }
             };
 
             var pages = await _client.Databases.QueryAsync(databaseId, new DatabasesQueryParameters { Filter = filter });
