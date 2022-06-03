@@ -18,7 +18,7 @@ namespace AntWorker.Net.Adguard
 
         public AdguardVerb()
         {
-
+            SetupUpdateRules();
         }
 
         private void SetupUpdateRules()
