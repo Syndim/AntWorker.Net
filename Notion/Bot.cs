@@ -74,7 +74,7 @@ namespace AntWorker.Net.Notion
             var today = DateTime.Today;
             var properties = new Dictionary<string, PropertyValue>
             {
-                { "Date Completed", new DatePropertyValue { Date = new Date { Start = new DateTime(today.Year, today.Month, today.Day) } } }
+                { "Date Completed", new DatePropertyValue { Date = new Date { Start = DateTime.Parse($"{today.Year}-{today.Month}-{today.Day}") } } }
             };
 
             var pages = await _client.Databases.QueryAsync(databaseId, new DatabasesQueryParameters { Filter = filter });
