@@ -59,6 +59,7 @@ namespace AntWorker.Net.Notion
 
             foreach (var page in pages.Results)
             {
+                Logging.LogInfo($"Archiving {page.Id}");
                 await _client.Pages.UpdatePropertiesAsync(page.Id, properties);
             }
         }
@@ -78,6 +79,7 @@ namespace AntWorker.Net.Notion
             var pages = await _client.Databases.QueryAsync(databaseId, new DatabasesQueryParameters { Filter = filter });
             foreach (var page in pages.Results)
             {
+                Logging.LogInfo($"Updating complete date for {page.Id}");
                 await _client.Pages.UpdatePropertiesAsync(page.Id, properties);
             }
         }
