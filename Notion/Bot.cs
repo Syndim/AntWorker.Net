@@ -1,4 +1,5 @@
 ﻿using global::Notion.Client;
+using Newtonsoft.Json;
 
 namespace AntWorker.Net.Notion
 {
@@ -6,7 +7,9 @@ namespace AntWorker.Net.Notion
     {
         class DateString
         {
+            [JsonProperty("start")]
             public string? Start { get; set; }
+            [JsonProperty("end")]
             public string? End { get; set; }
         }
 
@@ -14,6 +17,7 @@ namespace AntWorker.Net.Notion
         {
             public override PropertyValueType Type { get; } = PropertyValueType.Date;
 
+            [JsonProperty("date")]
             public DateString? Date { get; set; }
         }
 
